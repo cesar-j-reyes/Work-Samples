@@ -1,0 +1,62 @@
+﻿Which artists have albums that share a track title?
+
+
+SELECT Artist.Name, COUNT(*) as Num_Identical_Titles
+FROM Artist
+JOIN Album
+ON Artist.ArtistId=Album.ArtistId
+JOIN Track
+ON Album.AlbumId=Track.AlbumId
+WHERE Track.Name = Album.Title
+GROUP BY Artist.Name
+ORDER BY Num_Identical_Titles DESC;
+
+
+What is the average track length for each genre?
+
+
+SELECT Genre.Name, AVG(Track.Milliseconds)
+FROM Genre
+JOIN Track
+ON Genre.GenreId=Track.GenreId
+GROUP BY Genre.Name;
+
+
+Which genres are represented in the top 10 selling tracks?
+
+
+SELECT Track.Name, Genre.Name, (InvoiceLine.UnitPrice*InvoiceLine.Quantity)*COUNT(*) as AmountSpent
+FROM Artist
+JOIN Album
+ON Artist.ArtistId=Album.ArtistId
+JOIN Track
+ON Album.AlbumId=Track.AlbumId
+JOIN InvoiceLine
+ON Track.TrackId=InvoiceLine.TrackId
+JOIN Invoice
+ON InvoiceLine.InvoiceId=Invoice.InvoiceId
+JOIN Genre
+ON Genre.GenreId=Track.GenreId
+GROUP BY Track.Name
+ORDER BY AmountSpent DESC
+LIMIT 10;
+
+What are the top 5 countries in sales for Metallica?
+
+
+SELECT Customer.Country, (InvoiceLine.UnitPrice*InvoiceLine.Quantity)*COUNT(*) as Total_Sales
+FROM Customer
+JOIN Invoice
+ON Customer.CustomerId=Invoice.CustomerId
+JOIN InvoiceLine
+ON Invoice.InvoiceId=InvoiceLine.InvoiceId
+JOIN Track
+ON Track.TrackId=InvoiceLine.TrackId
+JOIN Album
+ON Track.AlbumId=Album.AlbumId
+JOIN Artist
+ON Artist.ArtistId=Album.ArtistId
+WHERE Artist.Name='Metallica'
+GROUP BY Customer.Country
+ORDER BY Total_Sales DESC
+LIMIT 5;
